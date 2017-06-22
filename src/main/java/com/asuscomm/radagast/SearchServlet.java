@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class MainServlet
  */
-@WebServlet("/SearchServlet")
+@WebServlet("/search/SearchServlet")
 public class SearchServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -137,7 +137,7 @@ public class SearchServlet extends HttpServlet {
 		
 		request.setAttribute("record", result);
 		//RequestDispatcher rd = getServletContext().
-		RequestDispatcher rd = request.getRequestDispatcher("/jsp1.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("jsp1.jsp");
 		rd.forward(request, response);
 	}
 

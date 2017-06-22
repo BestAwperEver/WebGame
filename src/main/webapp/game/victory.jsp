@@ -43,7 +43,7 @@
     <p>What are you going to do now?</p>
 
     <shiro:authenticated><p>You can visit your <a href="<c:url value="/account"/>">account page</a>.</p>
-	<p>Or, if you dare, you can <a href=/Game>walk into another Labyrinth.</a></p></shiro:authenticated>
+	<p>Or, if you dare, you can <a href=/Lobby>walk into another Labyrinth.</a></p></shiro:authenticated>
 	 <shiro:notAuthenticated><p>If you want to access the authenticated-only
 	 <a href="<c:url value="/account"/>">account page</a>,
         you will need to log-in first.</p>

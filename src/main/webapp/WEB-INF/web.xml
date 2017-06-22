@@ -43,6 +43,28 @@
     	<servlet-name>SearchServlet</servlet-name>
     	<servlet-class>com.asuscomm.radagast.SearchServlet</servlet-class>
     </servlet>
+    <servlet>
+    	<description>
+    	</description>
+    	<display-name>Lobby</display-name>
+    	<servlet-name>Lobby</servlet-name>
+    	<servlet-class>com.asuscomm.radagast.Lobby</servlet-class>
+    </servlet>
+    <servlet>
+    	<description>
+    	</description>
+    	<display-name>Registration</display-name>
+    	<servlet-name>Registration</servlet-name>
+    	<servlet-class>com.asuscomm.radagast.Registration</servlet-class>
+    </servlet>
+    <servlet-mapping>
+    	<servlet-name>Lobby</servlet-name>
+    	<url-pattern>/Lobby</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>Registration</servlet-name>
+    	<url-pattern>/Registration</url-pattern>
+    </servlet-mapping>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

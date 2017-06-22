@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Labyrinth : Login</title>
+    <title>Labyrinth : Registration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Add some nice styling and functionality.  We'll just use Twitter Bootstrap -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
@@ -16,24 +16,19 @@
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Please sign in or <a href="/registration.jsp">sign up</a></h3>
-                    </div>
                     <div class="panel-body">
-                        <form name="loginform" action="" method="POST" accept-charset="UTF-8" role="form">
+                        <form name="registrationform" action="/Registration" method="POST" accept-charset="UTF-8" role="form">
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Username" name="username" type="text">
+                                    <input class="form-control" placeholder="Username" name="username_reg" type="text">
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                    <input class="form-control" placeholder="Password" name="password_reg" type="password" value="">
                                 </div>
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="rememberMe" type="checkbox" value="true"> Remember Me
-                                    </label>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Confirm Password" name="confirm-password" type="password" value="">
                                 </div>
-                                <input class="btn btn-lg btn-success btn-block" type="submit" value="Login">
+                                <input class="btn btn-lg btn-success btn-block" type="submit" value="Register now">
                             </fieldset>
                         </form>
                     </div>

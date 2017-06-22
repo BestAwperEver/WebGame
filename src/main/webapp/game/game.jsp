@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Labyrinth</title>
+    <title>You are no in the Labyrinth.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Add some nice styling and functionality by using Twitter Bootstrap -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
@@ -20,9 +20,12 @@
 </head>
 
 <body>
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<button onclick="jQuery('#aaa').load(' #aaa');">Reload</button>
-	<div id="aaa"><%=new java.util.Date().toString()%></div>
+<!-- 	<script src="http://code.jquery.com/jquery-latest.js"></script> -->
+<!-- 	<button onclick="jQuery('#aaa').load(' #aaa');">Reload</button> -->
+<%-- 	<div id="aaa"><%=new java.util.Date().toString()%></div> --%>
+	<c:if test="${init != true}">
+		<c:redirect url = "/Lobby"/>
+	</c:if>	
     <%
         request.setAttribute("username", org.apache.shiro.SecurityUtils.getSubject().getPrincipal());
     %>
@@ -43,8 +46,8 @@
 	        loadlink() // this will run after every 5 seconds
 	    }, 5000);
     </script>
-	<div id="datetime" style="text-align:center">
-		<h2>Auto Refresh Header Example</h2>
+	<div id="datetime">
+<!-- 		<h2>Auto Refresh Header Example</h2> -->
 		It's <%=new java.util.Date().toString()%>
 	</div>
 	<sql:setDataSource var = "snapshot" driver = "com.mysql.jdbc.Driver"
@@ -53,7 +56,7 @@
 	
 	<div id="load_me">
     <sql:query dataSource = "${snapshot}" var = "result">
-       SELECT <shiro:hasRole name="admin">map_name, coords, </shiro:hasRole>bullets from Players where username = "${username}";
+       SELECT <shiro:hasRole name="admin">map_name, coords, </shiro:hasRole>bullets, info from Players where username = "${username}";
     </sql:query>
 
 	<c:forEach var = "row" items = "${result.rows}">
@@ -61,12 +64,14 @@
 		<shiro:hasRole name="admin"><p>You are on ${row.coords} cell.</p></shiro:hasRole>
 	</c:forEach>
 	</div>
-    
-	<c:if test="${in_hospital == true}">
-	<p>You are in hospital.</p>	
-	</c:if>	
-	<p>You have ${number_of_bullets} bullets.</p>
-	<c:out value = "${info}"/>
+	
+<%-- 	<c:if test="${in_hospital == true}"> --%>
+<!-- 	<p>You are in hospital.</p>	 -->
+<%-- 	</c:if>	 --%>
+<%-- 	<p>You have ${number_of_bullets} bullets.</p> --%>
+	<c:forEach var = "row" items = "${result.rows}">
+		<p><c:out value = "${row.info}"/></p>
+	</c:forEach>
 	
 	<form action="${pageContext.request.contextPath}/Game" method="post">
 	    <button type="submit" name="action" value="turn_right">Right</button>
@@ -74,54 +79,56 @@
 	    <button type="submit" name="action" value="turn_left">Left</button>
 	    <button type="submit" name="action" value="turn_down">Down</button>
 	    <br>
-	    <c:if test="${number_of_bullets > 0}">
-	    <button type="submit" name="action" value="turn_right">Shoot Right</button>
-	    <button type="submit" name="action" value="turn_up">Shoot Up</button>
-	    <button type="submit" name="action" value="turn_left">Shoot Left</button>
-	    <button type="submit" name="action" value="turn_down">Shoot Down</button>
-	    </c:if>
+	    <c:forEach var = "row" items = "${result.rows}">
+		    <c:if test="${row.bullets > 0}">
+		    <button type="submit" name="action" value="turn_right">Shoot Right</button>
+		    <button type="submit" name="action" value="turn_up">Shoot Up</button><br>
+		    <button type="submit" name="action" value="turn_left">Shoot Left</button>
+		    <button type="submit" name="action" value="turn_down">Shoot Down</button>
+		    </c:if>
+	    </c:forEach>
 	</form>
 
 	<br>
-    <p>Hi <shiro:guest>Guest</shiro:guest><shiro:user>
-        <c:out value="${username}"/></shiro:user>!
-        ( <shiro:user><a href="<c:url value="/logout"/>">Log out</a></shiro:user>
-        <shiro:guest><a href="<c:url value="/login.jsp"/>">Log in</a></shiro:guest> )
-    </p>
+<%--     <p>Hi, <shiro:guest>Guest</shiro:guest><shiro:user> --%>
+<%--         <c:out value="${username}"/></shiro:user>! --%>
+<%--         ( <shiro:user><a href="<c:url value="/logout"/>">Log out</a></shiro:user> --%>
+<%--         <shiro:guest><a href="<c:url value="/login.jsp"/>">Log in</a></shiro:guest> ) --%>
+<!--     </p> -->
 
-    <p>Welcome to Labyrinth.</p>
-	<p>Visit <a href="<c:url value="/jsp0.jsp"/>">search page</a>.</p>
-    <shiro:authenticated><p>Visit your <a href="<c:url value="/account"/>">account page</a>.</p></shiro:authenticated>
-    <shiro:notAuthenticated><p>If you want to access the authenticated-only <a href="<c:url value="/account"/>">account page</a>,
-        you will need to log-in first.</p></shiro:notAuthenticated>
+<!--     <p>Welcome to Labyrinth.</p> -->
+<%-- 	<p>Visit <a href="<c:url value="/jsp0.jsp"/>">search page</a>.</p> --%>
+<%--     <shiro:authenticated><p>Visit your <a href="<c:url value="/account"/>">account page</a>.</p></shiro:authenticated> --%>
+<%--     <shiro:notAuthenticated><p>If you want to access the authenticated-only <a href="<c:url value="/account"/>">account page</a>, --%>
+<%--         you will need to log-in first.</p></shiro:notAuthenticated> --%>
 
-    <h2>Roles</h2>
+<!--     <h2>Roles</h2> -->
 
-    <p>Here are the roles you have and don't have. Log out and log back in under different user
-        accounts to see different roles.</p>
+<!--     <p>Here are the roles you have and don't have. Log out and log back in under different user -->
+<!--         accounts to see different roles.</p> -->
 
-    <h3>Roles you have:</h3>
+<!--     <h3>Roles you have:</h3> -->
 
-    <p>
-        <shiro:hasRole name="Captains">Captain<br/></shiro:hasRole>
-        <shiro:hasRole name="admin">Admin<br/></shiro:hasRole>
-        <shiro:hasRole name="Enlisted">Enlisted<br/></shiro:hasRole>
-    </p>
+<!--     <p> -->
+<%--         <shiro:hasRole name="Captains">Captain<br/></shiro:hasRole> --%>
+<%--         <shiro:hasRole name="admin">Admin<br/></shiro:hasRole> --%>
+<%--         <shiro:hasRole name="Enlisted">Enlisted<br/></shiro:hasRole> --%>
+<!--     </p> -->
 
-    <h3>Roles you DON'T have:</h3>
+<!--     <h3>Roles you DON'T have:</h3> -->
 
-    <p>
-        <shiro:lacksRole name="Captains">Captain<br/></shiro:lacksRole>
-        <shiro:lacksRole name="admin">Admin<br/></shiro:lacksRole>
-        <shiro:lacksRole name="Enlisted">Enlisted<br/></shiro:lacksRole>
-    </p>
+<!--     <p> -->
+<%--         <shiro:lacksRole name="Captains">Captain<br/></shiro:lacksRole> --%>
+<%--         <shiro:lacksRole name="admin">Admin<br/></shiro:lacksRole> --%>
+<%--         <shiro:lacksRole name="Enlisted">Enlisted<br/></shiro:lacksRole> --%>
+<!--     </p> -->
 
-    <h2>Permissions</h2>
+<!--     <h2>Permissions</h2> -->
 
-    <ul>
-        <li>You may <shiro:lacksPermission name="ship:command:NCC-1701-D"><b>NOT</b> </shiro:lacksPermission> command the <code>NCC-1701-D</code> Starship!</li>
-        <li>You may <shiro:lacksPermission name="user:edit:${username}"><b>NOT</b> </shiro:lacksPermission> edit the ${username} user!</li>
-    </ul>
+<!--     <ul> -->
+<%--         <li>You may <shiro:lacksPermission name="ship:command:NCC-1701-D"><b>NOT</b> </shiro:lacksPermission> command the <code>NCC-1701-D</code> Starship!</li> --%>
+<%--         <li>You may <shiro:lacksPermission name="user:edit:${username}"><b>NOT</b> </shiro:lacksPermission> edit the ${username} user!</li> --%>
+<!--     </ul> -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
