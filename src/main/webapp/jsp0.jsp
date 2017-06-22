@@ -11,7 +11,7 @@
 </head>
 <body>
 	Hello, it is <%=getFormattedDate()%>
-	<form action="${pageContext.request.contextPath}/MainServlet" method="POST">
+	<form action="${pageContext.request.contextPath}/SearchServlet" method="POST">
 	    Part of name: <input type="text" name="name_part" />
 	    <br/>
 	    Part of phone: <input type="text" name="phone_part" />

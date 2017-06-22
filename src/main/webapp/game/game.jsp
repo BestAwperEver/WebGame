@@ -1,6 +1,11 @@
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:include page="include.jsp"/>
+<%@ page import = "java.io.*,java.util.*,java.sql.*"%>
+<%@ page import = "javax.servlet.http.*,javax.servlet.*" %>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/sql" prefix = "sql"%>
+<jsp:include page="../include.jsp"/>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,14 +18,72 @@
         body{padding:0 20px;}
     </style>
 </head>
+
 <body>
-
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<button onclick="jQuery('#aaa').load(' #aaa');">Reload</button>
+	<div id="aaa"><%=new java.util.Date().toString()%></div>
+    <%
+        request.setAttribute("username", org.apache.shiro.SecurityUtils.getSubject().getPrincipal());
+    %>
     <h1>Labyrinth</h1>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>
+    <script>
+	    function loadlink(){
+	        $('#load_me').load(' #load_me',function () {
+	             $(this).unwrap();
+	        });
+	        $('#datetime').load(' #datetime',function () {
+	             $(this).unwrap();
+	        });
+	    }
+	
+	    loadlink(); // This will run on page load
+	    setInterval(function(){
+	        loadlink() // this will run after every 5 seconds
+	    }, 5000);
+    </script>
+	<div id="datetime" style="text-align:center">
+		<h2>Auto Refresh Header Example</h2>
+		It's <%=new java.util.Date().toString()%>
+	</div>
+	<sql:setDataSource var = "snapshot" driver = "com.mysql.jdbc.Driver"
+       url = "jdbc:mysql://radagast.asuscomm.com:3306/web_game"
+       user = "web_game"  password = "webgamepassword"/>
+	
+	<div id="load_me">
+    <sql:query dataSource = "${snapshot}" var = "result">
+       SELECT <shiro:hasRole name="admin">map_name, coords, </shiro:hasRole>bullets from Players where username = "${username}";
+    </sql:query>
 
-    <p>Hi, <shiro:guest>Guest</shiro:guest><shiro:user>
-        <%
-            request.setAttribute("username", org.apache.shiro.SecurityUtils.getSubject().getPrincipal()); // .oneByType(java.util.Map.class));
-        %>
+	<c:forEach var = "row" items = "${result.rows}">
+		<p>You have ${row.bullets} bullets<shiro:hasRole name="admin"> on map "${row.map_name}"</shiro:hasRole>.</p>
+		<shiro:hasRole name="admin"><p>You are on ${row.coords} cell.</p></shiro:hasRole>
+	</c:forEach>
+	</div>
+    
+	<c:if test="${in_hospital == true}">
+	<p>You are in hospital.</p>	
+	</c:if>	
+	<p>You have ${number_of_bullets} bullets.</p>
+	<c:out value = "${info}"/>
+	
+	<form action="${pageContext.request.contextPath}/Game" method="post">
+	    <button type="submit" name="action" value="turn_right">Right</button>
+	    <button type="submit" name="action" value="turn_up">Up</button>
+	    <button type="submit" name="action" value="turn_left">Left</button>
+	    <button type="submit" name="action" value="turn_down">Down</button>
+	    <br>
+	    <c:if test="${number_of_bullets > 0}">
+	    <button type="submit" name="action" value="turn_right">Shoot Right</button>
+	    <button type="submit" name="action" value="turn_up">Shoot Up</button>
+	    <button type="submit" name="action" value="turn_left">Shoot Left</button>
+	    <button type="submit" name="action" value="turn_down">Shoot Down</button>
+	    </c:if>
+	</form>
+
+	<br>
+    <p>Hi <shiro:guest>Guest</shiro:guest><shiro:user>
         <c:out value="${username}"/></shiro:user>!
         ( <shiro:user><a href="<c:url value="/logout"/>">Log out</a></shiro:user>
         <shiro:guest><a href="<c:url value="/login.jsp"/>">Log in</a></shiro:guest> )
@@ -36,10 +99,6 @@
 
     <p>Here are the roles you have and don't have. Log out and log back in under different user
         accounts to see different roles.</p>
-
-	<p>
-		<shiro:hasRole name="player"><a href=/Game>Let's rock!</a></shiro:hasRole>
-	</p>
 
     <h3>Roles you have:</h3>
 

@@ -36,6 +36,13 @@
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
+    <servlet>
+    	<description>
+    	</description>
+    	<display-name>SearchServlet</display-name>
+    	<servlet-name>SearchServlet</servlet-name>
+    	<servlet-class>com.asuscomm.radagast.SearchServlet</servlet-class>
+    </servlet>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
