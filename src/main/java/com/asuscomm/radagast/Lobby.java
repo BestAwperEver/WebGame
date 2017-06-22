@@ -141,26 +141,46 @@ public final class Lobby extends HttpServlet {
 		Subject currentUser = SecurityUtils.getSubject();
 		String username = (String) currentUser.getPrincipal();
 		Session session = currentUser.getSession();
-	
-		String coord = null;
-		String map_name = null;
+		
+		PlayerInfo pinfo = null;
+//		boolean already_playing = false;
+		
 		try {
-			map_name = getRandomMapName();
-			coord = getRandomCoords(map_name);
+			pinfo = getInfoByUsername(username);
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
 		    System.out.println("SQLState: " + ex.getSQLState());
 		    System.out.println("VendorError: " + ex.getErrorCode());
 		}
-		int number_of_bullets = ThreadLocalRandom.current().nextInt(0, 7);
-		PlayerInfo pi = new PlayerInfo(map_name, coord, number_of_bullets,
-				"You are somewhere in the darkness of Labyrinth.");
-		try {
-			updatePlayerInfo(username, pi);
-		} catch (SQLException ex) {
-			System.out.println("SQLException: " + ex.getMessage());
-		    System.out.println("SQLState: " + ex.getSQLState());
-		    System.out.println("VendorError: " + ex.getErrorCode());
+		
+		if (pinfo != null && pinfo.map_name != null) {
+//			already_playing = true;
+//		}
+//		
+//		if (already_playing || session.getAttribute("init") != null
+//				&& session.getAttribute("init").equals(true)) {
+			// go play your previous lab or give up!
+		} else {
+			String coord = null;
+			String map_name = null;
+			try {
+				map_name = getRandomMapName();
+				coord = getRandomCoords(map_name);
+			} catch (SQLException ex) {
+				System.out.println("SQLException: " + ex.getMessage());
+			    System.out.println("SQLState: " + ex.getSQLState());
+			    System.out.println("VendorError: " + ex.getErrorCode());
+			}
+			int number_of_bullets = ThreadLocalRandom.current().nextInt(0, 7);
+			PlayerInfo pi = new PlayerInfo(map_name, coord, number_of_bullets,
+					"You are somewhere in the darkness of Labyrinth.");
+			try {
+				updatePlayerInfo(username, pi);
+			} catch (SQLException ex) {
+				System.out.println("SQLException: " + ex.getMessage());
+			    System.out.println("SQLState: " + ex.getSQLState());
+			    System.out.println("VendorError: " + ex.getErrorCode());
+			}
 		}
 //		request.setAttribute("number_of_bullets", number_of_bullets);
 //		request.setAttribute("info", pi.info);
@@ -173,7 +193,9 @@ public final class Lobby extends HttpServlet {
 		ResultSet rs = null;
 		if (stmt.execute("select map_name, coords, bullets, info from Players where username = \"" + username + "\"")) {
 			rs = stmt.getResultSet();
-			rs.next();
+			if (!rs.next()) {
+				return null;
+			}
 		}
 		return new PlayerInfo(rs.getString("map_name"), rs.getString("coords"),
 				rs.getInt("bullets"), rs.getString("info")); 

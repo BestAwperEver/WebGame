@@ -161,10 +161,10 @@ public final class Game extends HttpServlet {
 		//request.setAttribute("number_of_bullets", answer.number_of_bullets);
 		Subject currentUser = SecurityUtils.getSubject();
 		Session session = currentUser.getSession();
-		String url = "/game";
+		String url = "/labyrinth";
 		if (session.getAttribute("init") == null
 				|| session.getAttribute("init").equals(false)) {
-			url = "/Lobby";
+			url = "/";
 		}
 		RequestDispatcher rd = request.getRequestDispatcher(url);
 		rd.forward(request, response);
@@ -223,8 +223,16 @@ public final class Game extends HttpServlet {
 	}
 	protected void updatePlayerVictories(String username) throws SQLException {
 		Statement stmt2 = mysql_conn.createStatement();
-		stmt2.executeUpdate("update Players set victories = victories + 1 "
-				+ "where username = '" + username + "'");
+		stmt2.executeUpdate("update Players set victories = victories + 1"
+				+ ", map_name = NULL"
+				+ " where username = '" + username + "'");
+	}
+	protected void updatePlayerLooses(String username) throws SQLException {
+		Statement stmt2 = mysql_conn.createStatement();
+		stmt2.executeUpdate("update Players set looses = looses + 1"
+				+ ", map_name = NULL"
+				+ ", info = 'Defeat'"
+				+ " where username = '" + username + "'");
 	}
 	protected String getCellInfo(String map_name, String coord) throws SQLException {
 		Statement stmt = conn.createStatement();
@@ -299,7 +307,7 @@ public final class Game extends HttpServlet {
 			return pi;
 		}
 		if (info.equals("exit")) {
-			pi.info = "Victory! You are out of the Labyrinth!";
+			pi.info = "Victory";
 			pi.number_of_bullets = pi.number_of_bullets;
 			Subject currentUser = SecurityUtils.getSubject();
 			Session session = currentUser.getSession();
@@ -354,6 +362,7 @@ public final class Game extends HttpServlet {
 	protected PlayerInfo processAction(String pa) throws SQLException {
 		Subject currentUser = SecurityUtils.getSubject();
 		String username = (String) currentUser.getPrincipal();
+		Session session = currentUser.getSession();
 		PlayerInfo pi = null;
 		pi = getInfoByUsername(username);
 		//System.out.println(pa.substring(0, 4));
@@ -365,8 +374,13 @@ public final class Game extends HttpServlet {
 			//answer = processKnife(pi);
 		}
 		updatePlayerInfo(username, pi);
-		if (pi.info.substring(0, "Victory".length()).equals("Victory")) {
+		if (pi.info.equals("Victory")) {
 			updatePlayerVictories(username);
+			session.setAttribute("init", false);
+		}
+		if (pa.equals("giveup")) {
+			updatePlayerLooses(username);
+			session.setAttribute("init", false);
 		}
 		return pi;
 	}
@@ -386,10 +400,13 @@ public final class Game extends HttpServlet {
 		    System.out.println("VendorError: " + ex.getErrorCode());
 		}
 		
-		String url = "/game/game.jsp";
+		String url = "/labyrinth/game.jsp";
 		
-		if (pi.info.substring(0, "Victory".length()).equals("Victory")) {
-			url = "/game/victory.jsp";
+		if (pi.info.equals("Victory")) {
+			url = "/labyrinth/victory.jsp";
+		}
+		if (action.equals("giveup")) {
+			url = "/labyrinth/defeat.jsp";
 		}
 		
 //		request.setAttribute("number_of_bullets", pi.number_of_bullets);

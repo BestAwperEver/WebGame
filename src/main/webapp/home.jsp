@@ -28,6 +28,7 @@
 
     <p>Welcome to Labyrinth.</p>
     <shiro:authenticated><p>Visit your <a href="<c:url value="/account"/>">account page</a>.</p></shiro:authenticated>
+    <shiro:user><p>Visit <a href="<c:url value="/top"/>">Top-10 page.</a></p></shiro:user>
     <shiro:notAuthenticated><p>If you want to access the authenticated-only <a href="<c:url value="/account"/>">account page</a>,
         you will need to log-in first.</p></shiro:notAuthenticated>
 	<p><shiro:user><a href=/Lobby>Enter the Labyrinth</a></shiro:user></p>

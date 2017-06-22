@@ -9,14 +9,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>You are no in the Labyrinth.</title>
+    <title>Labyrinth : game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Add some nice styling and functionality by using Twitter Bootstrap -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/w3css/4/w3.css">
     <style>
         body{padding:0 20px;}
-    </style>
+		.button {
+			padding: 0px 0px;
+			width: 100px;
+			height: 50px;
+		    background-color: #4CAF50;
+		    color: white;
+			border: none;
+		    border-radius: 12px;
+		    text-align: center;
+		    text-decoration: none;
+		    display: inline-block;
+		    font-size: 14px;
+		    margin: 4px 2px;
+		    cursor: pointer;
+		}
+		.button1 {
+			border: 2px solid #f44336;
+			color: #f44336;
+			background-color: black;
+		}
+	</style>
 </head>
 
 <body>
@@ -29,7 +50,7 @@
     <%
         request.setAttribute("username", org.apache.shiro.SecurityUtils.getSubject().getPrincipal());
     %>
-    <h1>Labyrinth</h1>
+    <h2>You're in the Labyrinth</h2>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>
     <script>
 	    function loadlink(){
@@ -46,10 +67,6 @@
 	        loadlink() // this will run after every 5 seconds
 	    }, 5000);
     </script>
-	<div id="datetime">
-<!-- 		<h2>Auto Refresh Header Example</h2> -->
-		It's <%=new java.util.Date().toString()%>
-	</div>
 	<sql:setDataSource var = "snapshot" driver = "com.mysql.jdbc.Driver"
        url = "jdbc:mysql://radagast.asuscomm.com:3306/web_game"
        user = "web_game"  password = "webgamepassword"/>
@@ -58,8 +75,10 @@
     <sql:query dataSource = "${snapshot}" var = "result">
        SELECT <shiro:hasRole name="admin">map_name, coords, </shiro:hasRole>bullets, info from Players where username = "${username}";
     </sql:query>
-
 	<c:forEach var = "row" items = "${result.rows}">
+		<p><c:out value = "${row.info}"/></p>
+<%-- 	</c:forEach> --%>
+<%-- 	<c:forEach var = "row" items = "${result.rows}"> --%>
 		<p>You have ${row.bullets} bullets<shiro:hasRole name="admin"> on map "${row.map_name}"</shiro:hasRole>.</p>
 		<shiro:hasRole name="admin"><p>You are on ${row.coords} cell.</p></shiro:hasRole>
 	</c:forEach>
@@ -69,27 +88,31 @@
 <!-- 	<p>You are in hospital.</p>	 -->
 <%-- 	</c:if>	 --%>
 <%-- 	<p>You have ${number_of_bullets} bullets.</p> --%>
-	<c:forEach var = "row" items = "${result.rows}">
-		<p><c:out value = "${row.info}"/></p>
-	</c:forEach>
-	
+
 	<form action="${pageContext.request.contextPath}/Game" method="post">
-	    <button type="submit" name="action" value="turn_right">Right</button>
-	    <button type="submit" name="action" value="turn_up">Up</button>
-	    <button type="submit" name="action" value="turn_left">Left</button>
-	    <button type="submit" name="action" value="turn_down">Down</button>
+	    <button class="button" type="submit" name="action" value="turn_right">Step Right</button>
+	    <button class="button" type="submit" name="action" value="turn_up">Step Up</button>
 	    <br>
+	    <button class="button" type="submit" name="action" value="turn_left">Step Left</button>
+	    <button class="button" type="submit" name="action" value="turn_down">Step Down</button>
+	    <br><br>
 	    <c:forEach var = "row" items = "${result.rows}">
 		    <c:if test="${row.bullets > 0}">
-		    <button type="submit" name="action" value="turn_right">Shoot Right</button>
-		    <button type="submit" name="action" value="turn_up">Shoot Up</button><br>
-		    <button type="submit" name="action" value="turn_left">Shoot Left</button>
-		    <button type="submit" name="action" value="turn_down">Shoot Down</button>
+		    <button class="button" type="submit" name="action" value="turn_right">Shoot Right</button>
+		    <button class="button" type="submit" name="action" value="turn_up">Shoot Up</button><br>
+		    <button class="button" type="submit" name="action" value="turn_left">Shoot Left</button>
+		    <button class="button" type="submit" name="action" value="turn_down">Shoot Down</button>
 		    </c:if>
 	    </c:forEach>
 	</form>
-
 	<br>
+	<form action="${pageContext.request.contextPath}/Game" method="post">
+	    <button class="button button1" type="submit" name="action" value="giveup">Give up</button>
+	</form>
+	<br>
+	<div id="datetime">
+		<p>It's <%=new java.util.Date().toString()%></p>
+	</div>
 <%--     <p>Hi, <shiro:guest>Guest</shiro:guest><shiro:user> --%>
 <%--         <c:out value="${username}"/></shiro:user>! --%>
 <%--         ( <shiro:user><a href="<c:url value="/logout"/>">Log out</a></shiro:user> --%>

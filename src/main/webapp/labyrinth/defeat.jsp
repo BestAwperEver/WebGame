@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Congratulations!</title>
+    <title>Labirinth: defeat</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Add some nice styling and functionality by using Twitter Bootstrap -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
@@ -31,7 +31,8 @@
        SELECT * from Players where username = "${username}";
     </sql:query>
 	
-    <h1>So, <shiro:guest>Guest</shiro:guest><shiro:user><c:out value="${username}"/></shiro:user>, you are out of Labyrinth.</h1>
+    <h1>Not coped with the Labyrinth this time, huh?</h1>
+    <h2>Try harder next time, <c:out value="${username}"/>.</h2>
 	<c:forEach var = "row" items = "${result.rows}">	
 	<p>Now you have ${row.victories} victories and ${row.looses} looses.</p>
 	<p>You were ${row.slayed_by_minotaurs} times slayed by minotaurs
@@ -50,13 +51,6 @@
     </shiro:notAuthenticated>
 
     <p>Anyway, you are free to go <a href=/>home</a>.</p>
- 
-    <h2>Permissions</h2>
-
-    <ul>
-        <li>You may <shiro:lacksPermission name="ship:command:NCC-1701-D"><b>NOT</b> </shiro:lacksPermission> command the <code>NCC-1701-D</code> Starship!</li>
-        <li>You may <shiro:lacksPermission name="user:edit:${username}"><b>NOT</b> </shiro:lacksPermission> edit the ${username} user!</li>
-    </ul>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
