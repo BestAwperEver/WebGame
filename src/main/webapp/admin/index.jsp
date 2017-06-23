@@ -71,7 +71,7 @@
 	<br>
     <p>You are currently logged in.</p>
 
-    <p><a href="<c:url value="/home.jsp"/>">Return to the home page.</a></p>
+    <p>Return to the <a href="<c:url value="/home.jsp"/>">home page.</a></p>
 
     <p><a href="<c:url value="/logout"/>">Log out.</a></p>
 

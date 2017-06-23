@@ -25,42 +25,42 @@
         ( <shiro:user><a href="<c:url value="/logout"/>">Log out</a></shiro:user>
         <shiro:guest><a href="<c:url value="/testlogin.jsp"/>">Log in</a></shiro:guest> )
     </p>
-
-    <p>Welcome to Labyrinth.</p>
+    <h2>Welcome to Labyrinth.</h2>
+    <p>Read <a href="<c:url value="/about.jsp"/>">about the Labyrinth</a>.</p>
     <shiro:authenticated><p>Visit your <a href="<c:url value="/account"/>">account page</a>.</p></shiro:authenticated>
-    <shiro:user><p>Visit <a href="<c:url value="/top"/>">Top-10 page.</a></p></shiro:user>
+    <shiro:user><p>Visit <a href="<c:url value="/top"/>">Top-10 page</a>.</p></shiro:user>
     <shiro:notAuthenticated><p>If you want to access the authenticated-only <a href="<c:url value="/account"/>">account page</a>,
         you will need to log-in first.</p></shiro:notAuthenticated>
-	<p><shiro:user><a href=/Lobby>Enter the Labyrinth</a></shiro:user></p>
+	<p><shiro:user><a href=/Lobby>Enter the Labyrinth</a></shiro:user>.</p>
 	<shiro:hasRole name="admin">
 	<p><a href="<c:url value="/admin"/>">Jump to administrator panel</a>.</p>
-    <h2>Roles</h2>
+<!--     <h2>Roles</h2> -->
 
-    <p>Here are the roles you have and don't have. Log out and log back in under different user
-        accounts to see different roles.</p>
+<!--     <p>Here are the roles you have and don't have. Log out and log back in under different user -->
+<!--         accounts to see different roles.</p> -->
 
-    <h3>Roles you have:</h3>
+<!--     <h3>Roles you have:</h3> -->
 
-    <p>
-        <shiro:hasRole name="captain">Captain<br/></shiro:hasRole>
-        <shiro:hasRole name="admin">Administrator<br/></shiro:hasRole>
-        <shiro:hasRole name="Enlisted">Enlisted<br/></shiro:hasRole>
-    </p>
+<!--     <p> -->
+<%--         <shiro:hasRole name="captain">Captain<br/></shiro:hasRole> --%>
+<%--         <shiro:hasRole name="admin">Administrator<br/></shiro:hasRole> --%>
+<%--         <shiro:hasRole name="Enlisted">Enlisted<br/></shiro:hasRole> --%>
+<!--     </p> -->
 
-    <h3>Roles you DON'T have:</h3>
+<!--     <h3>Roles you DON'T have:</h3> -->
 
-    <p>
-        <shiro:lacksRole name="captain">Captain<br/></shiro:lacksRole>
-        <shiro:lacksRole name="admin">Administrator<br/></shiro:lacksRole>
-        <shiro:lacksRole name="Enlisted">Enlisted<br/></shiro:lacksRole>
-    </p>
+<!--     <p> -->
+<%--         <shiro:lacksRole name="captain">Captain<br/></shiro:lacksRole> --%>
+<%--         <shiro:lacksRole name="admin">Administrator<br/></shiro:lacksRole> --%>
+<%--         <shiro:lacksRole name="Enlisted">Enlisted<br/></shiro:lacksRole> --%>
+<!--     </p> -->
 
-    <h2>Permissions</h2>
+<!--     <h2>Permissions</h2> -->
 
-    <ul>
-        <li>You may <shiro:lacksPermission name="ship:command:NCC-1701-D"><b>NOT</b> </shiro:lacksPermission> command the <code>NCC-1701-D</code> Starship!</li>
-        <li>You may <shiro:lacksPermission name="user:edit:${username}"><b>NOT</b> </shiro:lacksPermission> edit the ${username} user!</li>
-    </ul>
+<!--     <ul> -->
+<%--         <li>You may <shiro:lacksPermission name="ship:command:NCC-1701-D"><b>NOT</b> </shiro:lacksPermission> command the <code>NCC-1701-D</code> Starship!</li> --%>
+<%--         <li>You may <shiro:lacksPermission name="user:edit:${username}"><b>NOT</b> </shiro:lacksPermission> edit the ${username} user!</li> --%>
+<!--     </ul> -->
     
      </shiro:hasRole>
 
