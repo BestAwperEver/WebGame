@@ -21,6 +21,10 @@
     <sql:query dataSource = "${snapshot}" var = "result">
     	SELECT username from Players;
 	</sql:query>
+	
+    <sql:query dataSource = "${snapshot}" var = "result2">
+    	select map_name from Maps;
+	</sql:query>
 
     <h2>For administrators only!</h2>
 
@@ -40,6 +44,20 @@
 	    <input type="text" name="bullets" style="height: 20px; width: 20px;"/>
 	    bullets: 
 	    <input type="submit" value="Send"/>
+	    </p>
+    </form>
+    
+    <p>You can resurrect minotaurs on any map.</p>
+    
+    	<form action="/admin/AdminFeatures" method="POST">
+		<p>Resurrect minotaurs on
+		<select class="selectpicker" name="map_name">
+			<option value = "all_maps">all maps</option>
+			<c:forEach var = "row2" items = "${result2.rows}">
+				<option value = "${row2.map_name}">${row2.map_name}</option>
+			</c:forEach>
+		</select>
+	    <input type="submit" value="Resurrect"/>
 	    </p>
     </form>
     

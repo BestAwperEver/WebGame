@@ -93,7 +93,6 @@ public final class Game extends HttpServlet {
 	 * @see Servlet#destroy()
 	 */
 	public void destroy() {
-		// TODO Auto-generated method stub
 		//Close Connection 
 		try {
 			if (mysql_conn != null && !mysql_conn.isClosed()) 
