@@ -196,6 +196,8 @@ public final class Game extends HttpServlet {
 		int number_of_bullets;
 		boolean was_slayed_by_minotaur = false;
 		boolean was_slayed_by_player = false;
+		boolean shot_a_minotaur = false;
+		int killed_players = 0;
 	}
 	protected PlayerInfo getInfoByUsername(String username) throws SQLException {
 		Statement stmt = mysql_conn.createStatement();
@@ -224,10 +226,18 @@ public final class Game extends HttpServlet {
 			slayed = ", slayed_by_players = slayed_by_players + 1";
 			pi.was_slayed_by_player = false;
 		}
+		if (pi.shot_a_minotaur) {
+			slayed = ", killed_minotaurs = killed_minotaurs + 1";
+			pi.shot_a_minotaur = false;
+		}
+		if (pi.killed_players > 0) {
+			slayed = ", killed_players = killed_players + " + pi.killed_players;
+			pi.killed_players = 0;
+		}
 		stmt2.executeUpdate("update Players set map_name = '" + pi.map_name
 						+ "', coords = '" + pi.coord
-						+ "', info = '" + pi.info
-						+ "', bullets = " + pi.number_of_bullets
+						+ "', info = \"" + pi.info
+						+ "\", bullets = " + pi.number_of_bullets
 						+ slayed
 						+ " where username = '" + username + "'");
 	}
@@ -286,8 +296,13 @@ public final class Game extends HttpServlet {
 		return rs.getString("hospital_coord");		
 	}
 	/**
+	 * @throws SQLException 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	protected void killMinotaur(String map_name, String coords) throws SQLException {
+		Statement stmt = conn.createStatement();
+		stmt.executeUpdate("update Maps set " + coords + " = 'minotaur_corpse' where map_name = '" + map_name + "'");
+	}
 	protected PlayerInfo processTurn(PlayerInfo pi, String direction) throws SQLException {
 		//Answer ans = new Answer();
 		String coord2 = pi.coord;
@@ -333,6 +348,16 @@ public final class Game extends HttpServlet {
 			pi.number_of_bullets = 0;
 			pi.coord = getHospitalCoord(pi.map_name);
 		}
+		if (info.equals("minotaur_corpse")) {
+			Random r = new Random();
+			if (r.nextInt(10) == 5) {
+				pi.info = "You have been slayed by a mino... Oh. Wait. It's just a corpse. Nevermind."
+						+ " You stepped " + direction + ".";
+			} else {
+				pi.info = " You stepped " + direction + ". Here lies a dead minotaur.";
+			}
+			pi.coord = coord2;
+		}
 		if (info.substring(0, 5).equals("river")) {
 			pi.info = "You are in river. You have been carried away by the flow.";
 			String river_direction = info.substring(6);
@@ -371,6 +396,84 @@ public final class Game extends HttpServlet {
 		pi.number_of_bullets = pi.number_of_bullets;
 		return pi;
 	}
+	protected PlayerInfo processShoot(String username, PlayerInfo pi, String direction) throws SQLException {
+		String coord = pi.coord;
+		String coord2 = pi.coord;
+		--pi.number_of_bullets;
+		Statement stmt2 = mysql_conn.createStatement();
+		stmt2.executeUpdate("update Players set"
+				+ " info = concat(info,\" Suddenly you've heard a shot! You are not alone...\")"
+				+ " where map_name = '" + pi.map_name + "'"
+				+ " and username <> '" + username + "'");
+		while (true) {
+			coord = coord2;
+			switch (direction) {
+				case "right": {
+					coord2 = (char)(coord2.charAt(0) + 1) + coord2.substring(1);
+				} break;
+				case "up": {
+					coord2 = coord2.substring(0, 1) +
+							(Integer.parseInt(coord2.substring(1,coord2.length()))+1);
+				} break;
+				case "left": {
+					char c = coord2.charAt(0);
+					if (c == 'a') c = 'z';
+					else --c;
+					coord2 = c + coord2.substring(1);
+				} break;
+				case "down": {
+					coord2 = coord2.substring(0, 1) +
+							(Integer.parseInt(coord2.substring(1,coord2.length()))-1);			
+				} break;
+			}
+			String info = getCellToCellInfo(pi.map_name, coord, coord2);
+			if (info.equals("wall") || info.equals("exit")) {
+				pi.info = "You've spent a bullet.";
+				return pi;
+			}
+			info = getCellInfo(pi.map_name, coord2);
+			if (info.equals("minotaur")) {
+				killMinotaur(pi.map_name, coord2);
+				pi.info = "You've shot a minotaur!";
+				pi.shot_a_minotaur = true;
+				return pi;
+			}
+			ResultSet rs2 = stmt2.executeQuery("select username from Players where"
+					+ " map_name = '" + pi.map_name + "'"
+					+ " and coords = '" + coord2 + "'"
+					+ " and username <> '" + username + "'");
+			LinkedList<String> killed = new LinkedList<String>();
+			while (rs2.next()) {
+				String username2 = rs2.getString("username");
+				killed.add(username2);
+			}
+			for (String username2: killed) {
+				commmitDeath(username2, username, pi, "shot");
+			}
+			if (killed.size() == 0) {
+				//the bullet moves forward
+			} else if (killed.size() == 1) {
+				pi.info = "You have killed " + killed.getFirst() + ".";
+				pi.killed_players = 1;
+				return pi;
+			} else if (killed.size() == 2) {
+				pi.info = "Doublekill! You have killed " + killed.getFirst() + " and " + killed.getLast() + ".";
+				pi.killed_players = 2;
+				return pi;
+			} else {
+				StringBuilder sb = new StringBuilder("Multikill! You have killed ");
+				for (String username2: killed) {
+					if (username2.equals(killed.getLast()) == false) {
+						sb.append(username2 + ", ");
+					}
+				}
+				sb.append("and " + killed.getLast() + ". You damn murderer!");
+				pi.killed_players = killed.size();
+				pi.info = sb.toString();
+				return pi;
+			}
+		}
+	}
 	protected void commmitDeath(String who, String by_whom, PlayerInfo pi, String reason) throws SQLException {
 		Statement stmt2 = mysql_conn.createStatement();
 		ResultSet rs = stmt2.executeQuery("select bullets from Players where username = '" + who + "'");
@@ -378,7 +481,9 @@ public final class Game extends HttpServlet {
 			log_me("Something wrong, trying to kill player " + who + ", which is not Player O_o");
 			return;
 		}
-		pi.number_of_bullets += rs.getInt("bullets");
+		if (reason == "slayed") {
+			pi.number_of_bullets += rs.getInt("bullets");
+		}
 //		stmt2.executeUpdate("update Players set killed_players = killed_players + 1"
 //				+ ", bullets = bullets + " + bullets
 //				+ " where username = '" + by_whom + "'");
@@ -406,13 +511,12 @@ public final class Game extends HttpServlet {
 		Statement stmt2 = mysql_conn.createStatement();
 		ResultSet rs2 = stmt2.executeQuery("select username from Players where"
 				+ " map_name = '" + pi.map_name + "'"
-				+ " and coords = '" + pi.coord + "'");
+				+ " and coords = '" + pi.coord + "'"
+				+ " and username <> '" + username + "'");
 		LinkedList<String> killed = new LinkedList<String>();
 		while (rs2.next()) {
 			String username2 = rs2.getString("username");
-			if (username.equals(username2) == false) {
-				killed.add(username2);
-			}
+			killed.add(username2);
 		}
 		for (String username2: killed) {
 			commmitDeath(username2, username, pi, "slayed");
@@ -433,6 +537,7 @@ public final class Game extends HttpServlet {
 			sb.append("and " + killed.getLast() + ". You damn murderer!");
 			pi.info = sb.toString();
 		}
+		pi.killed_players = killed.size();
 		return pi;
 	}
 	protected PlayerInfo processAction(String pa, PlayerInfo pi) throws SQLException {
@@ -443,7 +548,7 @@ public final class Game extends HttpServlet {
 		if (pa.substring(0, 4).equals("turn")) {
 			pi = processTurn(pi, pa.substring(5));
 		} else if (pa.substring(0, 5).equals("shoot")) {
-			//answer = processShoot(pi, pa.substring(6));
+			pi = processShoot(username, pi, pa.substring(6));
 		} else if (pa.equals("knife")){
 			pi = processKnife(username, pi);
 		} else if (pa.equals("suicide")) {

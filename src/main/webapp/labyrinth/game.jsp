@@ -101,13 +101,14 @@
 	    <br><br>
 	    <c:forEach var = "row" items = "${result.rows}">
 		    <c:if test="${row.bullets > 0}">
-		    <button class="button" type="submit" name="action" value="turn_right">Shoot Right</button>
-		    <button class="button" type="submit" name="action" value="turn_up">Shoot Up</button><br>
-		    <button class="button" type="submit" name="action" value="turn_left">Shoot Left</button>
-		    <button class="button" type="submit" name="action" value="turn_down">Shoot Down</button>
+		    <button class="button" type="submit" name="action" value="shoot_right">Shoot Right</button>
+		    <button class="button" type="submit" name="action" value="shoot_up">Shoot Up</button><br>
+		    <button class="button" type="submit" name="action" value="shoot_left">Shoot Left</button>
+		    <button class="button" type="submit" name="action" value="shoot_down">Shoot Down</button>
+		    <br><br>
 		    </c:if>
 	    </c:forEach>
-	    <br><br>
+	    
 	    <button class="button" type="submit" name="action" value="knife">Use knife</button>
 	    <button class="button button2" type="submit" name="action" value="suicide">Suicide</button>
 	</form>

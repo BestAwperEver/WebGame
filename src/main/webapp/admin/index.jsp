@@ -1,40 +1,56 @@
-<%--
-  ~ Copyright (c) 2013 Les Hazlewood and contributors
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  --%>
-<jsp:include page="../include.jsp"/>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/sql" prefix = "sql"%>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Labyrinth : admin</title>
+    <title>Labyrinth : administrator page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Add some nice styling and functionality.  We'll just use Twitter Bootstrap -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
+<!--     <link rel="stylesheet" href="https://silviomoreto.github.io/bootstrap-select/dist/css/bootstrap-select.min.css"> -->
     <style>
         body{padding: 0 20px;}
     </style>
 </head>
 <body>
 
+	<sql:setDataSource var = "snapshot" driver = "com.mysql.jdbc.Driver"
+       url = "jdbc:mysql://radagast.asuscomm.com:3306/web_game"
+       user = "web_game"  password = "webgamepassword"/>
+    <sql:query dataSource = "${snapshot}" var = "result">
+    	SELECT username from Players;
+	</sql:query>
+
     <h2>For administrators only!</h2>
 
     <p>This page simulates a restricted part of a web application intended for administrators only.</p>
     
-	<p>You can visit <a href="<c:url value="../search/jsp0.jsp"/>">search page</a>.</p>
+	<p>You can visit <a href="<c:url value="/search/jsp0.jsp"/>">search page</a>.</p>
 	
+	<p>You can add a specific amount (from 1 to 20) of bullets to any player.</p>
+	
+	<form action="/admin/AdminFeatures" method="POST">
+		<p>Send to
+		<select class="selectpicker" name="player">
+			<c:forEach var = "row" items = "${result.rows}">
+				<option value = "${row.username}">${row.username}</option>
+			</c:forEach>
+		</select>
+	    <input type="text" name="bullets" style="height: 20px; width: 20px;"/>
+	    bullets: 
+	    <input type="submit" value="Send"/>
+	    </p>
+    </form>
+    
+    <c:if test="${error != null}">
+    	<p>You have an error: ${error}</p>
+    </c:if>
+    <c:if test="${success != null}">
+    	<p>${success}</p>
+    </c:if>
+	
+	<br>
     <p>You are currently logged in.</p>
 
     <p><a href="<c:url value="/home.jsp"/>">Return to the home page.</a></p>

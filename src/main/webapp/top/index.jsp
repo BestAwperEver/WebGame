@@ -18,13 +18,17 @@
 	<sql:setDataSource var = "snapshot" driver = "com.mysql.jdbc.Driver"
        url = "jdbc:mysql://radagast.asuscomm.com:3306/web_game"
        user = "web_game"  password = "webgamepassword"/>
+<%--     <sql:update dataSource = "${snapshot}" var = "count"> --%>
+<!--     	set @rank=0; -->
+<%--     </sql:update> --%>
     <sql:query dataSource = "${snapshot}" var = "result">
-       SELECT username, victories, killed_minotaurs, killed_players from Players order by victories desc limit 10;
-    </sql:query>
-    
+    	SELECT username, victories, killed_minotaurs, killed_players from Players order by victories desc limit 10;
+	</sql:query>
+	<c:set var="count" value="1" scope="page" />
 	<table class="table">
 	  <thead class="thead-inverse">
 	    <tr>
+	      <th>#</th>
 	      <th>Name</th>
 	      <th>Victories</th>
 	      <th>Minotaurs slayed</th>
@@ -34,10 +38,12 @@
 	  <tbody>
          <c:forEach var = "row" items = "${result.rows}">
             <tr>
-               <td> <c:out value = "${row.username}"/></td>
-               <td> <c:out value = "${row.victories}"/></td>
-               <td> <c:out value = "${row.killed_minotaurs}"/></td>
-               <td> <c:out value = "${row.killed_players}"/></td>
+               <td><c:out value = "${count}"/></td>
+               <td><c:out value = "${row.username}"/></td>
+               <td><c:out value = "${row.victories}"/></td>
+               <td><c:out value = "${row.killed_minotaurs}"/></td>
+               <td><c:out value = "${row.killed_players}"/></td>
+               <c:set var="count" value="${count + 1}" scope="page"/>
             </tr>
          </c:forEach>
 	  </tbody>
