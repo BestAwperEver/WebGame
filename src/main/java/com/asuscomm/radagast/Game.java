@@ -357,6 +357,10 @@ public final class Game extends HttpServlet {
 			}
 			pi.coord = coord2;
 		}
+		if (info.substring(0, 2).equals("tp")) {
+			pi.info = "You stepped into portal. You've been teleported.";
+			pi.coord = info.substring(3);
+		}
 		if (info.substring(0, 5).equals("river")) {
 			pi.info = "You are in river. You have been carried away by the flow.";
 			String river_direction = info.substring(6);
