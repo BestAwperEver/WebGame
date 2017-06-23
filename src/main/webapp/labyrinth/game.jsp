@@ -37,6 +37,9 @@
 			color: #f44336;
 			background-color: black;
 		}
+		.button2 {
+			color: #f44336;
+		}
 	</style>
 </head>
 
@@ -104,6 +107,9 @@
 		    <button class="button" type="submit" name="action" value="turn_down">Shoot Down</button>
 		    </c:if>
 	    </c:forEach>
+	    <br><br>
+	    <button class="button" type="submit" name="action" value="knife">Use knife</button>
+	    <button class="button button2" type="submit" name="action" value="suicide">Suicide</button>
 	</form>
 	<br>
 	<form action="${pageContext.request.contextPath}/Game" method="post">

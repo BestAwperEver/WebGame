@@ -38,7 +38,8 @@
 	<p>You were ${row.slayed_by_minotaurs} times slayed by minotaurs
 		and ${row.slayed_by_players} times by other players,<br>
 		and you've killed them
-		${row.killed_minotaurs} and ${row.killed_players} times, respectively.</p>
+		${row.killed_minotaurs} and ${row.killed_players} times, respectively.<br>
+		You've ${row.suicides} times committed suicide.</p>
 	</c:forEach>
 	
     <p>What are you going to do now?</p>
